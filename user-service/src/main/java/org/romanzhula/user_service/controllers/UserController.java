@@ -1,13 +1,11 @@
 package org.romanzhula.user_service.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.romanzhula.user_service.requests.UserRequest;
 import org.romanzhula.user_service.responses.UserResponse;
 import org.romanzhula.user_service.services.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,11 +21,18 @@ public class UserController {
         return ResponseEntity.ok(userService.getAll());
     }
 
-    @GetMapping("/{user-id")
+    @GetMapping("/{user-id}")
     public ResponseEntity<UserResponse> getUserById(
             @PathVariable("user-id") String userId
     ) {
         return ResponseEntity.ok(userService.getUserByUd(userId));
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<String> addNewUser(
+            @RequestBody UserRequest userRequest
+    ) {
+        return ResponseEntity.ok(userService.addNewUser(userRequest));
     }
 
 }
