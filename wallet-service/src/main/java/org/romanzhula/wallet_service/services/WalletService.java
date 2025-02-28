@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.romanzhula.wallet_service.repositories.WalletRepository;
 import org.romanzhula.wallet_service.responses.CommonWalletResponse;
+import org.romanzhula.wallet_service.responses.WalletBalanceResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,14 @@ public class WalletService {
     public CommonWalletResponse getWalletById(UUID walletId) {
         return walletRepository.findById(walletId)
                 .map(wallet -> new CommonWalletResponse(wallet.getUserId(), wallet.getBalance()))
+                .orElseThrow(() -> new EntityNotFoundException("Wallet not found with id: " + walletId))
+        ;
+    }
+
+    @Transactional(readOnly = true)
+    public WalletBalanceResponse getBalanceByWalletId(UUID walletId) {
+        return walletRepository.findById(walletId)
+                .map(wallet -> new WalletBalanceResponse(wallet.getBalance()))
                 .orElseThrow(() -> new EntityNotFoundException("Wallet not found with id: " + walletId))
         ;
     }
