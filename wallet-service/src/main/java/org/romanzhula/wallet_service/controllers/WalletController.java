@@ -2,6 +2,7 @@ package org.romanzhula.wallet_service.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.romanzhula.wallet_service.responses.CommonWalletResponse;
+import org.romanzhula.wallet_service.responses.WalletBalanceResponse;
 import org.romanzhula.wallet_service.services.WalletService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,13 @@ public class WalletController {
             @PathVariable("wallet-id") UUID walletId
     ) {
         return ResponseEntity.ok(walletService.getWalletById(walletId));
+    }
+
+    @GetMapping("/{wallet-id}/balance")
+    public ResponseEntity<WalletBalanceResponse> getBalanceByWalletId(
+            @PathVariable("wallet-id") UUID walletId
+    ) {
+        return ResponseEntity.ok(walletService.getBalanceByWalletId(walletId));
     }
 
 }
