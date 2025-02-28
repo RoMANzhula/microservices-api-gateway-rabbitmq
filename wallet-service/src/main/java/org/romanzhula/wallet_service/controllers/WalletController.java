@@ -5,10 +5,12 @@ import org.romanzhula.wallet_service.responses.CommonWalletResponse;
 import org.romanzhula.wallet_service.services.WalletService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +23,13 @@ public class WalletController {
     @GetMapping("/all")
     public ResponseEntity<List<CommonWalletResponse>> getAll() {
         return ResponseEntity.ok(walletService.getAllWallets());
+    }
+
+    @GetMapping("/{wallet-id}")
+    public ResponseEntity<CommonWalletResponse> getWalletById(
+            @PathVariable("wallet-id") UUID walletId
+    ) {
+        return ResponseEntity.ok(walletService.getWalletById(walletId));
     }
 
 }
