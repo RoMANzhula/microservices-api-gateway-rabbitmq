@@ -11,4 +11,7 @@ public class RabbitmqConfig {
     @Value("${rabbitmq.queue.name.user-created}")
     private String queueUserCreated;
 
+    @Value("${rabbitmq.queue.name.wallet-updated}")
+    private String queueWalletReplenished;
+
 }
