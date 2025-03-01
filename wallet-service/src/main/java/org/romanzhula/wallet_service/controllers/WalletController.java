@@ -1,14 +1,12 @@
 package org.romanzhula.wallet_service.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.romanzhula.wallet_service.models.events.BalanceOperationEvent;
 import org.romanzhula.wallet_service.responses.CommonWalletResponse;
 import org.romanzhula.wallet_service.responses.WalletBalanceResponse;
 import org.romanzhula.wallet_service.services.WalletService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +36,13 @@ public class WalletController {
             @PathVariable("wallet-id") UUID walletId
     ) {
         return ResponseEntity.ok(walletService.getBalanceByWalletId(walletId));
+    }
+
+    @PostMapping("/up-balance")
+    public ResponseEntity<String> replenishBalance(
+            @RequestBody BalanceOperationEvent balanceOperationEvent
+    ) {
+        return ResponseEntity.ok(walletService.replenishBalance(balanceOperationEvent));
     }
 
 }
