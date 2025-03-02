@@ -1,5 +1,6 @@
 package org.romanzhula.user_service.configurations;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
@@ -8,10 +9,13 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ErrorHandler;
 
+
+@Slf4j
 @Configuration
 public class RabbitmqConfig {
 
@@ -30,7 +34,7 @@ public class RabbitmqConfig {
 
     @Bean
     public Queue userCreatedQueue() {
-        return new Queue(queueUserCreated, false); // durable "false" - this queue will be removed after stop server
+        return new Queue(queueUserCreated, true); // durable "false" - this queue will be removed after stop server
     }
 
     @Bean
@@ -69,6 +73,15 @@ public class RabbitmqConfig {
     public ErrorHandler rabbitErrorHandler() {
         return (Throwable t) -> {
             throw new AmqpRejectAndDontRequeueException("Error processing message", t);
+        };
+    }
+
+    @Bean
+    public CommandLineRunner createQueueAtStartup(RabbitAdmin rabbitAdmin, Queue userCreatedQueue) {
+        return args -> {
+            rabbitAdmin.declareQueue(userCreatedQueue);
+
+            log.info("Queue {} is created or already exist.", userCreatedQueue.getName());
         };
     }
 
