@@ -45,4 +45,11 @@ public class WalletController {
         return ResponseEntity.ok(walletService.replenishBalance(balanceOperationEvent));
     }
 
+    @PatchMapping("/deduct-balance")
+    public ResponseEntity<String> deductBalance(
+            @RequestBody BalanceOperationEvent balanceOperationEvent
+    ) {
+        return ResponseEntity.ok(walletService.deductBalance(balanceOperationEvent));
+    }
+
 }
