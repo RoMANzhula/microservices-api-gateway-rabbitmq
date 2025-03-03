@@ -36,6 +36,9 @@ public class RabbitmqConfig {
     @Value("${rabbitmq.queue.name.wallet-updated}")
     private String queueWalletReplenished;
 
+    @Value("${rabbitmq.queue.name.expense-added}")
+    private String queueWalletReplenishedForExpensesService;
+
 
     @Bean
     public MessageConverter jsonMessageConverter() {
@@ -82,11 +85,17 @@ public class RabbitmqConfig {
     }
 
     @Bean
-    public CommandLineRunner createQueueAtStartup(RabbitAdmin rabbitAdmin, Queue queueWalletReplenished) {
+    public CommandLineRunner createQueueAtStartup(
+            RabbitAdmin rabbitAdmin,
+            Queue queueWalletReplenished,
+            Queue queueWalletReplenishedForExpensesService
+    ) {
         return args -> {
             rabbitAdmin.declareQueue(queueWalletReplenished);
+            rabbitAdmin.declareQueue(queueWalletReplenishedForExpensesService);
 
-            log.info("Queue {} is created or already exist.", queueWalletReplenished.getName());
+            log.info("Queue {} is created or already exists.", queueWalletReplenished.getName());
+            log.info("Queue {} is created or already exists.", queueWalletReplenishedForExpensesService.getName());
         };
     }
 
