@@ -1,6 +1,7 @@
 package org.romanzhula.wallet_service.services;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.romanzhula.wallet_service.configurations.RabbitmqConfig;
 import org.romanzhula.wallet_service.models.Wallet;
@@ -24,6 +25,7 @@ public class WalletService {
     private final WalletRepository walletRepository;
     private final RabbitTemplate rabbitTemplate;
     private final RabbitmqConfig rabbitmqConfig;
+    @Getter
     private final AddWalletService addWalletService;
 
 
@@ -60,6 +62,7 @@ public class WalletService {
         replenishWalletBalance(wallet, balanceOperationEvent.getAmount());
 
         sendDataToQueueWalletReplenished(balanceOperationEvent);
+        sendDataToQueueWalletReplenishedForExpensesService(balanceOperationEvent);
 
         return "Balance replenished successfully.";
     }
@@ -121,6 +124,13 @@ public class WalletService {
     private void sendDataToQueueWalletReplenished(BalanceOperationEvent balanceOperationEvent) {
         rabbitTemplate.convertAndSend(
                 rabbitmqConfig.getQueueWalletReplenished(),
+                new BalanceOperationEvent(balanceOperationEvent.getUserId(), balanceOperationEvent.getAmount())
+        );
+    }
+
+    private void sendDataToQueueWalletReplenishedForExpensesService(BalanceOperationEvent balanceOperationEvent) {
+        rabbitTemplate.convertAndSend(
+                rabbitmqConfig.getQueueWalletReplenishedForExpensesService(),
                 new BalanceOperationEvent(balanceOperationEvent.getUserId(), balanceOperationEvent.getAmount())
         );
     }
