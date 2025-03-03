@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.romanzhula.wallet_service.configurations.RabbitmqConfig;
 import org.romanzhula.wallet_service.models.Wallet;
 import org.romanzhula.wallet_service.models.events.BalanceOperationEvent;
+import org.romanzhula.wallet_service.models.events.ExpensesResponseEvent;
 import org.romanzhula.wallet_service.repositories.WalletRepository;
 import org.romanzhula.wallet_service.responses.CommonWalletResponse;
 import org.romanzhula.wallet_service.responses.WalletBalanceResponse;
@@ -129,9 +130,19 @@ public class WalletService {
     }
 
     private void sendDataToQueueWalletReplenishedForExpensesService(BalanceOperationEvent balanceOperationEvent) {
+        WalletBalanceResponse remainingBalance = getBalanceByWalletId(balanceOperationEvent.getUserId());
+
+        ExpensesResponseEvent expensesResponseEvent = new ExpensesResponseEvent(
+                balanceOperationEvent.getUserId(),
+                "Wallet replenished",
+                balanceOperationEvent.getAmount(),
+                "Balance updated successfully",
+                remainingBalance.getBalance()
+        );
+
         rabbitTemplate.convertAndSend(
                 rabbitmqConfig.getQueueWalletReplenishedForExpensesService(),
-                new BalanceOperationEvent(balanceOperationEvent.getUserId(), balanceOperationEvent.getAmount())
+                expensesResponseEvent
         );
     }
 
