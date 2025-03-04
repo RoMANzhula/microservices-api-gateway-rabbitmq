@@ -29,4 +29,10 @@ public class Expense {
     @Column(name = "amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
+    @Column(name = "message_request")
+    private String message;
+
+    @Column(name = "balance", nullable = false, precision = 12, scale = 2)
+    private BigDecimal remainingBalance;
+
 }
