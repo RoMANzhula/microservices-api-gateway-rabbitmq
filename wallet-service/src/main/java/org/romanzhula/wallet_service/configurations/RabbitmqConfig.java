@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -51,6 +52,11 @@ public class RabbitmqConfig {
     }
 
     @Bean
+    public Queue walletReplenishedForExpensesServiceQueue() {
+        return new Queue(queueWalletReplenishedForExpensesService, true);
+    }
+
+    @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
             CachingConnectionFactory cachingConnectionFactory,
             ErrorHandler rabbitErrorHandler
@@ -87,8 +93,8 @@ public class RabbitmqConfig {
     @Bean
     public CommandLineRunner createQueueAtStartup(
             RabbitAdmin rabbitAdmin,
-            Queue queueWalletReplenished,
-            Queue queueWalletReplenishedForExpensesService
+            @Qualifier("walletReplenishedQueue") Queue queueWalletReplenished,
+            @Qualifier("walletReplenishedForExpensesServiceQueue") Queue queueWalletReplenishedForExpensesService
     ) {
         return args -> {
             rabbitAdmin.declareQueue(queueWalletReplenished);
