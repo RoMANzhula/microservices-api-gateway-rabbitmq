@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +18,20 @@ public class JournalService {
     @Transactional(readOnly = true)
     public List<JournalResponse> getAllEntries() {
         return journalRepository.findAll()
+                .stream()
+                .map(journalEntry -> new JournalResponse(
+                        journalEntry.getId(),
+                        journalEntry.getUserId(),
+                        journalEntry.getDescription(),
+                        journalEntry.getCreatedAt()
+                ))
+                .toList()
+        ;
+    }
+
+    @Transactional(readOnly = true)
+    public List<JournalResponse> getAllUserJournalEntries(String userId) {
+        return  journalRepository.findAllByUserId(UUID.fromString(userId))
                 .stream()
                 .map(journalEntry -> new JournalResponse(
                         journalEntry.getId(),
