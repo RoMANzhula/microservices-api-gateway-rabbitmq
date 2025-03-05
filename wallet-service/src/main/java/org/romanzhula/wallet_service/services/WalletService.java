@@ -62,7 +62,13 @@ public class WalletService {
         Wallet wallet = fetchWalletById(balanceOperationEvent.getUserId());
         replenishWalletBalance(wallet, balanceOperationEvent.getAmount());
 
-        sendDataToQueueWalletReplenished(balanceOperationEvent);
+        String description = String.format(
+                "Operation replenish: -%s, account balance: %s",
+                balanceOperationEvent.getAmount(),
+                wallet.getBalance()
+        );
+
+        sendDataToQueueWalletReplenished(balanceOperationEvent, description);
         sendDataToQueueWalletReplenishedForExpensesService(balanceOperationEvent);
 
         return "Balance replenished successfully.";
@@ -79,7 +85,13 @@ public class WalletService {
         wallet.setBalance(wallet.getBalance().subtract(balanceOperationEvent.getAmount()));
         walletRepository.save(wallet);
 
-        sendDataToQueueWalletReplenished(balanceOperationEvent);
+        String description = String.format(
+                "Operation deduct: -%s, account balance: %s",
+                balanceOperationEvent.getAmount(),
+                wallet.getBalance()
+        );
+
+        sendDataToQueueWalletReplenished(balanceOperationEvent, description);
 
         return "Your balance successfully deducted!";
     }
@@ -122,10 +134,14 @@ public class WalletService {
         }
     }
 
-    private void sendDataToQueueWalletReplenished(BalanceOperationEvent balanceOperationEvent) {
+    private void sendDataToQueueWalletReplenished(BalanceOperationEvent balanceOperationEvent, String description) {
         rabbitTemplate.convertAndSend(
                 rabbitmqConfig.getQueueWalletReplenished(),
-                new BalanceOperationEvent(balanceOperationEvent.getUserId(), balanceOperationEvent.getAmount())
+                new BalanceOperationEvent(
+                        balanceOperationEvent.getUserId(),
+                        balanceOperationEvent.getAmount(),
+                        description
+                )
         );
     }
 
