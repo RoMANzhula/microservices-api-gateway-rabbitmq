@@ -19,7 +19,7 @@ public class AddNewEntriesToJournalService {
     private final JournalRepository journalRepository;
 
 
-    @RabbitListener(queues = "#{@rabbitmqConfig.")
+    @RabbitListener(queues = "#{@rabbitmqConfig.getQueueWalletBalanceUpdated}")
     public void receiveQueueWalletUpdated(JournalEntryEvent journalEntryEvent) {
         handleJournalEntryFromWallet(rabbitmqConfig.getQueueWalletBalanceUpdated(), journalEntryEvent);
     }
