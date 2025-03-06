@@ -63,7 +63,7 @@ public class WalletService {
         replenishWalletBalance(wallet, balanceOperationEvent.getAmount());
 
         String description = String.format(
-                "Operation replenish: -%s, account balance: %s",
+                "Operation replenish: +%s, account balance: %s",
                 balanceOperationEvent.getAmount(),
                 wallet.getBalance()
         );
